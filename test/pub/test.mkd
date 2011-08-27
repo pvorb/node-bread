@@ -1,0 +1,12 @@
+title: First post
+date: August 14th, 2011
+author: Paul
+template: post.tpl
+
+
+This is my **first** blog post.
+
+Here's a heading
+----------------
+
+> And this is a block quote
