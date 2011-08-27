@@ -1,0 +1,23 @@
+{
+	"author": "Paul Vorbach <paul@vorb.de> (http://vorb.de)",
+	"name": "pie",
+	"description": "simple blogging engine that uses bake, mongodb and markdown",
+	"version": "0.0.0",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/pvorb/node-pie.git"
+	},
+	"bugs": {
+		"web": "https://github.com/pvorb/node-pie/issues"
+	},
+	"main": "pie.js",
+	"engines": {
+		"node": ">=0.4.0"
+	},
+	"dependencies": {
+		"bake": ">=0.5.2",
+		"Index": ">=0.0.2",
+		"mongodb": ">=0.9.6-13",
+		"marked": ">=0.0.8"
+	}
+}

@@ -1,0 +1,2 @@
+**bake-blog** is a simple blogging engine for node that uses bake, mongodb and
+markdown.
