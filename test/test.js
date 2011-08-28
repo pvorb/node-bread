@@ -1,4 +1,4 @@
-var pie = require("../");
+var bread = require("../");
 
 var conf = {
 	dbinf: {
@@ -43,4 +43,4 @@ var conf = {
 	}
 };
 
-pie(conf);
+bread(conf);

@@ -4,7 +4,7 @@ var bake = require("bake"),
     marked = require("marked");
 
 // Main function
-var pie = function(conf) {
+var bread = function(conf) {
 
 	// later holds a reference to the Index object
 	var index;
@@ -34,9 +34,9 @@ var pie = function(conf) {
 		// save ref to index
 		index = i;
 
-		// Bake the pie
+		// bake the bread
 		bake(conf, hooks);
 	});
 };
 
-module.exports = pie;
+module.exports = bread;
