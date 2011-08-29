@@ -86,3 +86,4 @@ This package is licensed under the [MIT license][mit].
 [marked]: //github.com/chjj/marked
 [wiki]: //github.com/pvorb/node-bread/wiki
 [issues]: //github.com/pvorb/node-bread/issues
+[mit]: http://vorb.de/license/mit
