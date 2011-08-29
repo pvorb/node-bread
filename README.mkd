@@ -65,8 +65,24 @@ var conf = {
 bread(conf);
 ```
 
-That's it for the moment. Extended documentation will soon follow in the wiki.
+That's it for the moment. Extended documentation will soon follow in the [wiki][wiki].
 
-[bake]://github.com/pvorb/node-bake
-[mongodb-native]://github.com/christkv/node-mongodb-native
-[marked]://github.com/chjj/marked
+
+Bugs and Issues
+===============
+
+If you encounter any bugs or issues, feel free to open an issue at
+[github][issues].
+
+
+License
+=======
+
+This package is licensed under the [MIT license][mit].
+
+
+[bake]: //github.com/pvorb/node-bake
+[mongodb-native]: //github.com/christkv/node-mongodb-native
+[marked]: //github.com/chjj/marked
+[wiki]: //github.com/pvorb/node-bread/wiki
+[issues]: //github.com/pvorb/node-bread/issues
