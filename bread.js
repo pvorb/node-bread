@@ -1,6 +1,5 @@
 var bake = require("bake"),
     Index = require("Index"),
-    mongodb = require("mongodb"),
     marked = require("marked");
 
 // Main function
@@ -17,6 +16,10 @@ var bread = function(conf) {
 		return marked(prop.__content);
 	};
 
+	hooks.tags = function(fn, prop) {
+		index.addTags(prop.tags);
+	}
+
 	// Add files to index
 	hooks.__writeAfter = function(fn, prop) {
 		index.add(prop);
@@ -24,10 +27,10 @@ var bread = function(conf) {
 
 	// Write indexes, feeds and tag pages
 	hooks.__complete = function(fn, prop) {
-		if (conf.indexes != undefined)
+		if (conf.indexes)
 			index.write(conf);
-		// if (conf.tags != undefined)
-		// 	index.writeTags(conf.tags);
+		if (conf.tags)
+		 	index.writeTags(conf);
 	};
 
 	new Index(conf.dbinf, function(i) {
