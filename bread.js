@@ -19,7 +19,18 @@ var bread = function(conf) {
 
 	// Parse ISO 8601 dates
 	hooks.date = function(fn, prop) {
-		return isodate(prop.date);
+		var date;
+		// If it's not a date, try parse it
+		if (typeof prop.date !== "date") {
+			try {
+				date = isodate(prop.date);
+			} catch (err) {
+				date = new Date(prop.date);
+			}
+		} else {
+			date = prop.date;
+		}
+		return date;
 	};
 
 	// Add files to index

@@ -3,7 +3,7 @@
 	"name": "bread",
 	"description": "simple blogging engine that uses bake, Index and markdown (marked)",
 	"tags": [ "blog", "markdown" ],
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/pvorb/node-bread.git"
