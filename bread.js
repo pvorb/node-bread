@@ -1,6 +1,7 @@
 var bake = require("bake"),
     Index = require("Index"),
-    marked = require("marked");
+    marked = require("marked"),
+    isodate = require("isodate");
 
 // Main function
 var bread = function(conf) {
@@ -8,7 +9,7 @@ var bread = function(conf) {
 	// later holds a reference to the Index object
 	var index;
 
-	// Intialize hooks.
+	// Initialize hooks.
 	var hooks = {};
 
 	// Parse contents with `marked()`
@@ -16,9 +17,10 @@ var bread = function(conf) {
 		return marked(prop.__content);
 	};
 
-	hooks.tags = function(fn, prop) {
-		index.addTags(prop.tags);
-	}
+	// Parse ISO 8601 dates
+	hooks.date = function(fn, prop) {
+		return isodate(prop.date);
+	};
 
 	// Add files to index
 	hooks.__writeAfter = function(fn, prop) {
@@ -37,7 +39,7 @@ var bread = function(conf) {
 		// save ref to index
 		index = i;
 
-		// bake the bread
+		// bake some bread
 		bake(conf, hooks);
 	});
 };
