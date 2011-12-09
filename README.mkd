@@ -11,55 +11,55 @@ var bread = require("bread");
 
 // configuration object
 var conf = {
-	dbinf: { // MongoDB connection
-		host: "localhost",
-		port: "27017",
-		name: "mywebsite",
-		collection: "pages"
-	},
+  dbinf: { // MongoDB connection
+    host: "localhost",
+    port: "27017",
+    name: "mywebsite",
+    collection: "pages"
+  },
 
-	directories: {
-		input: "pub",    // Look for files in this dir.
-		output: "pub",   // Write files to this dir.
-		templates: "tpl" // Look for templates in this dir.
-	},
+  directories: {
+    input: "pub",    // Look for files in this dir.
+    output: "pub",   // Write files to this dir.
+    templates: "tpl" // Look for templates in this dir.
+  },
 
-	fileExtensions: { // Replace markdown by html
-		"mkd": "html",
-		"md": "html",
-		"mdown": "html",
-		"markdown": "html"
-	},
+  fileExtensions: { // Replace markdown by html
+    "mkd": "html",
+    "md": "html",
+    "mdown": "html",
+    "markdown": "html"
+  },
 
-	// Array of indexes that shall be created
-	indexes: [
-		// Blog Index
-		{
-			title: "My Blog",
-			pattern: /\/log\/[^\/]+/, // Index files matched by this pattern.
-			path: {
-				first: "/log/index.html",  // first page of the index
-				pattern: "/log/index-{{page}}.html"  // other pages
-			},
-			template: "index.tpl",    // template
-			limit: 8,                 // 8 links per page
-			sort: [["date", "desc"]]  // newest first
-		},
-		// RSS Feed
-		{
-			title: "My Blog",
-			pattern: /\/log\/[^\/]+/, // Add files matched by this pattern to
-			                          // the feed.
-			path: "/log/feed.xml",    // feed url
-			template: "rss.tpl",      // template
-			limit: 10,                // total maximum
-			sort: [["date", "desc"]]  // newest first
-		}
-	],
+  // Array of indexes that shall be created
+  indexes: [
+    // Blog Index
+    {
+      title: "My Blog",
+      pattern: /\/log\/[^\/]+/, // Index files matched by this pattern.
+      path: {
+        first: "/log/index.html",  // first page of the index
+        pattern: "/log/index-{{page}}.html"  // other pages
+      },
+      template: "index.tpl",    // template
+      limit: 8,                 // 8 links per page
+      sort: [["date", "desc"]]  // newest first
+    },
+    // RSS Feed
+    {
+      title: "My Blog",
+      pattern: /\/log\/[^\/]+/, // Add files matched by this pattern to
+                                // the feed.
+      path: "/log/feed.xml",    // feed url
+      template: "rss.tpl",      // template
+      limit: 10,                // total maximum
+      sort: [["date", "desc"]]  // newest first
+    }
+  ],
 
-	properties: {
-		siteTitle: "My Site"
-	}
+  properties: {
+    siteTitle: "My Site"
+  }
 };
 
 bread(conf);
