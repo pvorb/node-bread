@@ -48,8 +48,8 @@ var conf = {
     // RSS Feed
     {
       title: "My Blog",
-      pattern: /\/log\/[^\/]+/, // Add files matched by this pattern to
-                                // the feed.
+      pattern: /\/log\/[^\/]+/, // Add files matched by this pattern to the
+                                // feed.
       path: "/log/feed.xml",    // feed url
       template: "rss.tpl",      // template
       limit: 10,                // total maximum
