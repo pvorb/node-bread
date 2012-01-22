@@ -1,0 +1,17 @@
+**esc** allows you to quickly escape HTML strings. It is capable of
+automatically extending URLs in the HTML for use in feeds.
+
+## Example
+
+```javascript
+var esc = require('esc');
+
+var html = '<a href="../some.html">link</a>';
+console.log(esc(html, { uri: 'http://example.com/path/to/document.html' }));
+```
+
+This will print:
+
+```
+&lt;a href=&quot;http://example.com/path/some.html&quot;&gt;
+```
