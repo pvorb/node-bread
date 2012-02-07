@@ -1,0 +1,184 @@
+# reg
+
+A registry for documents written for Node.js.
+
+With reg, you can easily manage sequences of documents in a MongoDB. It has
+support for adding, removing and retrieving documents from a given collection.
+You can either query single documents, the whole collection or multiple pages.
+
+## Installation
+
+```
+npm install reg
+```
+
+## API
+
+### Constructor
+
+```
+Reg(collection[, indexFields], cb)
+```
+
+Creates a new registry.
+
+*   `collection` is a reference to a mongodb collection.
+    (see [Collections][col])
+*   `indexFields` (optional) is an object, that defines which fields
+    should be indexed. If a value is positive, the index is created in ascending
+    order. Otherwise it is created in descending order.
+
+    ```js
+    default = {
+      _id: -1,
+      created: -1,
+      modified: -1
+    };
+    ```
+*   `cb` is a callback function that gets two arguments `(err, reg)`, where
+    `err` is an error or `null` and `reg` is a reference to the created
+    registry.
+
+### Methods
+
+#### Modification
+
+```js
+reg.save(id, obj, cb)
+```
+
+Inserts or replaces an existing document in the collection. An existing document
+will be replaced, if the id already exists in the database.
+
+*   `id` is the ID of a resource.
+*   `obj` is the document or object that you want to save.
+*   `cb` is a callback function that gets one argument `(err)`, where `err` is
+    an error or `null`.
+
+```js
+reg.extend(id, obj, cb)
+```
+
+Extends an existing document in the collection. This method replaces existing
+fields.
+
+*   `id` is the ID of a resource.
+*   `obj` is the document or object that you want to extend.
+*   `cb` is a callback function that gets one argument `(err)`, where `err` is
+    an error or `null`.
+
+```js
+reg.remove(id, cb)
+```
+
+Removes an existing document in the collection.
+
+*   `id` is the ID of a resource.
+*   `cb` is a callback function that gets one argument `(err)`, where `err` is
+    an error or `null`.
+
+#### Retrieval
+
+```js
+reg.get(query, fields, order, limit, cb)
+```
+
+Queries the collection and gets a single cursor.
+
+*   `query` is an object that defines a MongoDB query (see [Queries][queries]).
+*   `fields` is an object that defines, which fields should be includet in the
+    result set. You can pass `{}` to get all fields. You can set single fields
+    to `true` if you want to include them (e.g. `{ title: true }`).
+*   `order` defines how the result set should be ordered (see section “Sorting”
+    at [Queries][queries]).
+*   `limit` is a numeric value that says how many records will be contained in
+    the result set. If `limit` is `0`, all documents will be retrieved.
+*   `cb` is a callback function that gets two arguments `(err, cursor)`, where
+    `err` is an error or `null` and `cursor` is a MongoDB cursor (see section
+    “Cursors” in [Queries][queries]).
+
+```js
+reg.getPages(query, fields, order, limit, cb)
+```
+
+Queries the collection and gets an array of cursors. One cursor for each page.
+
+*   `query` is an object that defines a MongoDB query (see [Queries][queries]).
+*   `fields` is an object that defines, which fields should be includet in the
+    result set. You can pass `{}` to get all fields. You can set single fields
+    to `true` if you want to include them (e.g. `{ title: true }`).
+*   `order` defines how the result set should be ordered (see section “Sorting”
+    at [Queries][queries]).
+*   `limit` is a numeric value that says how many records will be contained in
+    each page. The last page may contain fewer records. If `limit` is `0`, all
+    documents will be retrieved in a single page.
+*   `cb` is a callback function that gets two arguments `(err, cursors)`, where
+    `err` is an error or `null` and `cursors` is an array of MongoDB cursors
+    (see section “Cursors” in [Queries][queries]). There is one cursor for
+    every page in the right order.
+
+## Usage
+
+Usually you would use something like the path of a document for it's ID.
+
+```js
+var mongodb = require('mongodb');
+var Reg = require('reg');
+
+// setup a connection to a mongo db
+new mongodb.Db('test', new mongodb.Server('localhost', 27017))
+    .open(function (err, db) {
+  if (err)
+    return console.error(err);
+
+  db.collection('test', function (err, collection) {
+    if (err)
+      return console.error(err);
+
+    new Reg(collection, function (err, reg) {
+      if (err)
+        return console.error(err);
+
+      reg.save('path/to/document.html', {
+        title: 'Example document',
+        created: new Date()
+      }, function (err) {
+        if (err)
+          return console.error(err);
+      });
+
+      /* Save or extend some more documents... */
+
+      // get pages for all files, that end on '.html'
+      reg.getPages({ _id: /\.html$/ }, { title: true, created: true },
+          function (err, pages) {
+        if (err)
+          return console.error(err);
+
+        // for each page
+        for (var i in pages) {
+          pages[i].toArray(function (err, docs) {
+            if (err)
+              return console.error(err);
+
+            // print the page
+            console.log('---\n' + docs);
+          });
+        }
+      })
+    });
+  }
+});
+```
+
+## Bugs and Issues
+
+If you encounter any bugs or issues, feel free to open an issue at
+[github](//github.com/pvorb/node-reg/issues).
+
+## License
+
+The [MIT license](http://vorb.de/license/mit.html).
+
+[col]: https://github.com/christkv/node-mongodb-native/blob/master/docs/collections.md
+[queries]: https://github.com/christkv/node-mongodb-native/blob/master/docs/queries.md
