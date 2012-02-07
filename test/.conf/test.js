@@ -1,16 +1,20 @@
-var bread = require("../");
+var bread = require('../../bread.js');
+var path = require('path');
 
 var conf = {
-  dbinf: {
+  confdir: __dirname,
+  root: path.resolve(__dirname, '..'),
+
+  db: {
     host: "localhost",
-    port: "27017",
-    name: "index",
-    collection: "pages"
+    port: 27017,
+    name: "test",
+    collection: "test"
   },
   directories: {
     input: "pub",
     output: "pub",
-    templates: "tpl"
+    templates: ".conf/templates"
   },
   fileExtensions: {
     "mkd": "html",
@@ -21,7 +25,7 @@ var conf = {
   indexes: [
     {
       title: "Blog",
-      pattern: /\/\d\/[^\/]+/,
+      pattern: /log\/\d[^\/]+/,
       path: {
         first: "index.html",
         pattern: "index-{{page}}.html"
@@ -32,15 +36,29 @@ var conf = {
     },
     {
       title: "Blog",
+      pattern: /./,
       path : "feed.xml",
       template: "atom.tpl",
       limit: 10,
       sort: [["date", "desc"]]
     }
   ],
+  tags: {
+    directory: 'tag',
+    template: 'tag.tpl',
+    sort: [['date', 'desc']],
+    index: {
+      path: 'index.html',
+      template: 'tag-index.tpl'
+    }
+  },
   properties: {
     siteTitle: "My Site"
   }
 };
 
-bread(conf);
+bread(conf, function (err) {
+  debugger;
+  if (err) throw err;
+  console.log('baked');
+});
