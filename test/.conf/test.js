@@ -1,5 +1,6 @@
 var bread = require('../../bread.js');
 var path = require('path');
+var colors = require('colors');
 
 var conf = {
   confdir: __dirname,
@@ -25,7 +26,7 @@ var conf = {
   indexes: [
     {
       title: "Blog",
-      pattern: /log\/\d[^\/]+/,
+      pattern: /\d\d-.+/,
       path: {
         first: "index.html",
         pattern: "index-{{page}}.html"
@@ -36,7 +37,7 @@ var conf = {
     },
     {
       title: "Blog",
-      pattern: /./,
+      pattern: /\d\d-.+/,
       path : "feed.xml",
       template: "atom.tpl",
       limit: 10,
@@ -58,7 +59,10 @@ var conf = {
 };
 
 bread(conf, function (err) {
-  debugger;
-  if (err) throw err;
-  console.log('baked');
+  if (err) {
+    console.log('not ok'.red);
+    throw err;
+  }
+
+  console.log('ok'.green);
 });
