@@ -13,7 +13,6 @@ var x = function () {};
 var bread = function(conf, cb) {
 
   var dir = conf.directories;
-  var tags = [];
 
   // Open connection to MongoDB
   new mongo.Db(conf.db.name, new mongo.Server(conf.db.host, conf.db.port))
@@ -32,6 +31,7 @@ var bread = function(conf, cb) {
           return cb(err);
 
         var hooks = {};
+        reg.tags = {};
 
         // Parse contents with `marked()`
         hooks.__content = function(f, prop) {
@@ -63,7 +63,7 @@ var bread = function(conf, cb) {
           // Used later by write()
           if (prop.tags)
             for (var i = 0; i < prop.tags.length; i++)
-              tags[prop.tags[i]] = true;
+              reg.tags[prop.tags[i].trim()] = true;
 
           reg.extend(id, prop, x);
         };
@@ -72,12 +72,13 @@ var bread = function(conf, cb) {
         hooks.__complete = function(f, prop) {
           write(reg, conf, function (err) {
             if (err)
-              cb(err);
+              return cb(err);
             db.close();
-            cb(null);
+            cb();
           });
         };
 
+        // bake according to conf with hooks, cb on err
         bake(conf, hooks, function (err) {
           if (err)
             cb(err);

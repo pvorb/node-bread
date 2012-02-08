@@ -6,6 +6,7 @@ var async = require('async');
 var ejs = require('ejs');
 
 module.exports = function write(reg, conf, cb) {
+  console.log('Beginning to write index and tag files.');
   async.parallel({
     indexes: function (callback) {
       indexes(reg, conf, callback);
@@ -20,8 +21,8 @@ function indexes(reg, conf, cb) {
   var dir = conf.directories;
   var output = path.resolve(conf.confdir, '..', dir.output);
 
-    // total number of indexes
-    var todo = conf.indexes.length;
+  // total number of indexes
+  var todo = conf.indexes.length;
 
   // for each index, lookup documents and then write them to disk
   conf.indexes.forEach(function (index) {
@@ -57,7 +58,7 @@ function indexes(reg, conf, cb) {
                 return cb(err);
               console.log('  '+file+' written.');
               if (!--todo)
-                cb(null, file);
+                cb();
             });
           });
         });
@@ -69,8 +70,7 @@ function indexes(reg, conf, cb) {
           if (err)
             return cb(err);
 
-          var files = [];
-
+          var files = 0;
           // for each page, own scope
           for (var i = 0; i < pages.length; i++) {(function (i) {
             var page = pages[i];
@@ -86,7 +86,7 @@ function indexes(reg, conf, cb) {
                 var file = path.resolve(output, index.path.first);
               else
                 var file = path.resolve(output,
-                  index.path.pattern.replace(/{{page}}/g, i));
+                  index.path.pattern.replace(/{{page}}/g, i + 1));
 
               // write the page to disk
               fs.writeFile(file, data, function (err) {
@@ -94,8 +94,8 @@ function indexes(reg, conf, cb) {
                   return cb(err);
                 // callback at last
                 console.log('  '+file+' written.');
-                if (files.length == pages.length && !--todo)
-                  cb(null, files);
+                if (++files == pages.length && !--todo)
+                  cb();
               });
             });
           })(i);}
@@ -108,22 +108,59 @@ function tags(reg, conf, cb) {
   var dir = conf.directories;
   var tags = conf.tags;
 
-  if (reg.tags)
+  if (reg.tags) {
+    reg.tags = Object.keys(reg.tags);
+    var tagDir = path.resolve(conf.root, dir.output, tags.directory);
+
     // Load templates concurrently
     async.parallel({
       tag: function (callback) {
         fs.readFile(path.resolve(dir.templates, tags.template), 'utf8',
-          callback);
+            function (err, tpl) {
+          var todo = reg.tags.length;
+          for (var i = 0; i < reg.tags.length; i++) {(function (i) {
+            var p = clone(conf.properties);
+
+            var tag = reg.tags[i];
+            p.title = tag;
+
+            var tagFile = ejs.render(tpl, { locals: p });
+            var file = path.resolve(tagDir, tag+'.html');
+
+            fs.writeFile(file, tagFile, function (err) {
+              if (err)
+                return callback(err);
+              console.log('  '+file+' written.');
+              if (!--todo)
+                return callback();
+            });
+          })(i);}
+        });
       },
       index: function (callback) {
         fs.readFile(path.resolve(dir.templates, tags.index.template), 'utf8',
-          callback);
+            function (err, tpl) {
+          var p = clone(conf.properties);
+
+          p.__tags = reg.tags;
+
+          var index = ejs.render(tpl, { locals: p });
+          var file = path.resolve(tagDir, tags.index.path);
+
+          fs.writeFile(file, index, function (err) {
+            if (err)
+              return callback(err);
+            console.log('  '+file+' written.');
+            callback();
+          });
+        });
       }
-    }, function (err, tpl) {
+    }, function (err) {
       if (err)
         return cb(err);
 
-      return cb(null);
-
+      cb();
     });
+  } else
+    return cb();
 }
