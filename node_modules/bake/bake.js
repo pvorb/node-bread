@@ -36,7 +36,7 @@ var bake = function(conf, hooks, cb) {
       = new RegExp('\.(' + Object.keys(fileExt).join('|') + ')$', 'i');
 
   // Status log
-  console.log('Beginning to bake ' + inputDir + '.\n');
+  console.log('Beginning to bake ' + inputDir + '.');
 
   // Dive into the public directory
   dive(inputDir, function(err, master) {
@@ -134,7 +134,7 @@ var bake = function(conf, hooks, cb) {
               hooks.__writeAfter(master, prop);
 
             // Log status on success
-            console.log('  ' + resName + ' written.\n');
+            console.log('  ' + resName + ' written.');
 
             // When file counter is zero
             if (!--todo) {
