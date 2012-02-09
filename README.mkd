@@ -1,7 +1,9 @@
-**bread** is a simple blogging engine for node that uses [bake][bake],
+![bread](https://raw.github.com/pvorb/node-bread/master/res/bread.png)
+
+a file based static website/blog generator for node that uses [bake][bake],
 [mongodb][mongodb-native] and [markdown][marked].
 
-So let's see how you can bake your bread in node.
+So let’s see how you can bake your bread in node.
 
 Example
 -------
