@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var append = require('append');
 var clone = require('clone');
+var dive = require('dive');
 var async = require('async');
 var ejs = require('ejs');
 
@@ -13,13 +14,16 @@ module.exports = function write(reg, conf, cb) {
     },
     tags: function (callback) {
       tags(reg, conf, callback);
+    },
+    autoindex: function (callback) {
+      autoindex(reg, conf, callback);
     }
   }, cb);
 };
 
 function indexes(reg, conf, cb) {
   var dir = conf.directories;
-  var output = path.resolve(conf.confdir, '..', dir.output);
+  var output = path.resolve(conf.root, dir.output);
 
   // total number of indexes
   var todo = conf.indexes.length;
@@ -79,8 +83,6 @@ function indexes(reg, conf, cb) {
                 return cb(err);
               p.__docs = documents;
 
-              var data = ejs.render(tpl, { locals: p });
-
               // get filename for page
               if (i == 0)
                 var file = path.resolve(output, index.path.first);
@@ -88,8 +90,10 @@ function indexes(reg, conf, cb) {
                 var file = path.resolve(output,
                   index.path.pattern.replace(/{{page}}/g, i + 1));
 
+              var fileContents = ejs.render(tpl, { locals: p });
+
               // write the page to disk
-              fs.writeFile(file, data, function (err) {
+              fs.writeFile(file, fileContents, function (err) {
                 if (err)
                   return cb(err);
                 // callback at last
@@ -124,10 +128,10 @@ function tags(reg, conf, cb) {
             var tag = reg.tags[i];
             p.title = tag;
 
-            var tagFile = ejs.render(tpl, { locals: p });
             var file = path.resolve(tagDir, tag+'.html');
+            var fileContents = ejs.render(tpl, { locals: p });
 
-            fs.writeFile(file, tagFile, function (err) {
+            fs.writeFile(file, fileContents, function (err) {
               if (err)
                 return callback(err);
               console.log('  '+file+' written.');
@@ -144,10 +148,10 @@ function tags(reg, conf, cb) {
 
           p.__tags = reg.tags;
 
-          var index = ejs.render(tpl, { locals: p });
           var file = path.resolve(tagDir, tags.index.path);
+          var fileContents = ejs.render(tpl, { locals: p });
 
-          fs.writeFile(file, index, function (err) {
+          fs.writeFile(file, fileContents, function (err) {
             if (err)
               return callback(err);
             console.log('  '+file+' written.');
@@ -163,4 +167,61 @@ function tags(reg, conf, cb) {
     });
   } else
     return cb();
+}
+
+function autoindex(reg, conf, cb) {
+  var pubDir = path.resolve(conf.root, conf.directories.output);
+  var tplDir = conf.directories.templates;
+
+  // dive down the directory tree
+  dive(pubDir, { directories: true, files: false }, function (err, dir) {
+    if (err)
+      return cb(err);
+    console.log('\n'+dir);
+
+    for (var i in conf.autoindex) {(function (index) {
+      console.log(index.pattern);
+      if ((dir+'/').match(new RegExp(index.pattern))) {
+        async.parallel({
+          tpl: function (callback) {
+            // read template
+            fs.readFile(path.resolve(tplDir, index.template), 'utf8',
+                function (err, tpl) {
+              if (err)
+                return callback(err);
+              callback(null, tpl);
+            });
+          },
+          files: function (callback) {
+            // read directory
+            fs.readdir(dir, function (err, files) {
+              if (err)
+                return callback(err);
+              // filter unwanted files
+              var filtered = files.filter(function (elem) {
+                return !(new RegExp(index.filter)).test(elem);
+              });
+              callback(null, filtered);
+            });
+          }
+        }, function (err, data) {
+          if (err)
+            return cb(err);
+          var p = clone(conf.properties);
+          p.__dir = dir;
+          p.__files = data.files;
+
+          var file = path.resolve(dir, index.path);
+          var fileContents = ejs.render(data.tpl, { locals: p });
+
+          // write generated index
+          fs.writeFile(file, fileContents, function (err) {
+            if (err)
+              return cb(err);
+            console.log('  '+file+' written.');
+          });
+        });
+      }
+    })(conf.autoindex[i])}
+  }, cb);
 }
