@@ -1,8 +1,11 @@
 var bake = require('bake');
 var Reg = require('reg');
-var marked = require('marked');
-var mongo = require('mongodb');
+var pandoc = require('pdc');
 var isodate = require('isodate');
+var mongo = require('mongodb');
+var append = require('append');
+var clone = require('clone');
+var Set = require('Set');
 
 var write = require('./write.js');
 
@@ -31,58 +34,55 @@ var bread = function(conf, cb) {
           return cb(err);
 
         var hooks = {};
-        reg.tags = {};
+        reg.tags = new Set();
 
         // Parse contents with `marked()`
-        hooks.__content = function(f, prop) {
-          return marked(prop.__content);
+        hooks.__content = function(f, prop, cb) {
+          pandoc(prop.__content, 'markdown', 'html', cb);
         };
 
         // Parse ISO 8601 dates
-        hooks.date = function(f, prop) {
+        hooks.date = function(f, prop, cb) {
           var date;
           // If it's not a date, try parse it
           if (typeof prop.date != 'date') {
             try {
               date = isodate(prop.date);
             } catch (err) {
-              date = new Date(prop.date);
+              try {
+                date = new Date(prop.date);
+              } catch (err) {
+                return cb(err);
+              }
             }
           } else
             date = prop.date;
 
-          return date;
+          cb(null, date)
         };
 
         // Save files in registry
-        hooks.__writeAfter = function(f, prop) {
+        hooks.__writeAfter = function(f, prop, cb) {
           var id = prop._id;
           delete prop._id;
-
-          // Save reference to all used tags
-          // Used later by write()
+          reg.extend(id, prop, x);
           if (prop.tags)
             for (var i = 0; i < prop.tags.length; i++)
-              reg.tags[prop.tags[i].trim()] = true;
-
-          reg.extend(id, prop, x);
+              reg.tags.add(prop.tags[i].trim());
+          cb(null, prop);
         };
 
         // Write indexes, feeds and tag pages
-        hooks.__complete = function(f, prop) {
+        hooks.__complete = function(f, prop, cb) {
           write(reg, conf, function (err) {
             if (err)
               return cb(err);
             db.close();
-            cb();
+            cb(null);
           });
         };
 
-        // bake according to conf with hooks, cb on err
-        bake(conf, hooks, function (err) {
-          if (err)
-            cb(err);
-        });
+        bake(conf, hooks, cb);
       });
     });
   });

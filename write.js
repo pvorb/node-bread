@@ -113,7 +113,6 @@ function tags(reg, conf, cb) {
   var tags = conf.tags;
 
   if (reg.tags) {
-    reg.tags = Object.keys(reg.tags);
     var tagDir = path.resolve(conf.root, dir.output, tags.directory);
 
     // Load templates concurrently
@@ -122,15 +121,17 @@ function tags(reg, conf, cb) {
         fs.readFile(path.resolve(dir.templates, tags.template), 'utf8',
             function (err, tpl) {
           var todo = reg.tags.length;
-          for (var i = 0; i < reg.tags.length; i++) {(function (i) {
+
+          // for each tag
+          reg.tags.toArray().forEach(function (tag) {
             var p = clone(conf.properties);
 
-            var tag = reg.tags[i];
             p.title = tag;
 
             var file = path.resolve(tagDir, tag+'.html');
             var fileContents = ejs.render(tpl, { locals: p });
 
+            // write tag file
             fs.writeFile(file, fileContents, function (err) {
               if (err)
                 return callback(err);
@@ -138,7 +139,7 @@ function tags(reg, conf, cb) {
               if (!--todo)
                 return callback();
             });
-          })(i);}
+          });
         });
       },
       index: function (callback) {
@@ -146,7 +147,7 @@ function tags(reg, conf, cb) {
             function (err, tpl) {
           var p = clone(conf.properties);
 
-          p.__tags = reg.tags;
+          p.__tags = reg.tags.toArray();
 
           var file = path.resolve(tagDir, tags.index.path);
           var fileContents = ejs.render(tpl, { locals: p });
@@ -177,10 +178,8 @@ function autoindex(reg, conf, cb) {
   dive(pubDir, { directories: true, files: false }, function (err, dir) {
     if (err)
       return cb(err);
-    console.log('\n'+dir);
 
     for (var i in conf.autoindex) {(function (index) {
-      console.log(index.pattern);
       if ((dir+'/').match(new RegExp(index.pattern))) {
         async.parallel({
           tpl: function (callback) {

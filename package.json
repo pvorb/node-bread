@@ -22,17 +22,18 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
+    "Set": ">=0.1.0",
     "append": ">=0.1.1",
-    "async": ">=0.1.15",
-    "bake": ">=0.7.0",
+    "async": ">=0.1.16",
+    "bake": ">=1.0.0",
     "clone": ">=0.0.4",
     "colors": ">=0.6.0",
     "confdir": ">=0.0.2",
     "dive": ">=0.2.0",
     "ejs": ">=0.6.1",
-    "marked": ">=0.1.9",
-    "mongodb": ">=0.9.8-7",
     "isodate": ">=0.1.0",
+    "mongodb": ">=0.9.9",
+    "pdc": ">=0.0.0",
     "reg": ">=0.1.0"
   },
   "licenses": [
@@ -40,7 +41,5 @@
       "type": "MIT",
       "url": "http://vorb.de/license/mit.html"
     }
-  ],
-  "devDependencies": {},
-  "optionalDependencies": {}
+  ]
 }
