@@ -12,8 +12,10 @@ confdir(process.cwd(), 'conf', function (err, dir) {
     throw err;
 
   fs.readFile(path.resolve(dir, 'conf.json'), 'utf8', function (err, conf) {
-    if (err)
+    if (err) {
+      console.log('not ok'.red);
       throw err;
+    }
 
     var conf = JSON.parse(conf);
     conf.confdir = dir;

@@ -74,15 +74,18 @@ var bread = function(conf, cb) {
 
         // Write indexes, feeds and tag pages
         hooks.__complete = function(f, prop, cb) {
+          console.log('Content files written.');
           write(reg, conf, function (err) {
             if (err)
               return cb(err);
-            db.close();
             cb(null);
           });
         };
 
-        bake(conf, hooks, cb);
+        bake(conf, hooks, function (err) {
+          db.close();
+          cb(err);
+        });
       });
     });
   });

@@ -10,13 +10,22 @@ module.exports = function write(reg, conf, cb) {
   console.log('Beginning to write index and tag files.');
   async.parallel({
     indexes: function (callback) {
-      indexes(reg, conf, callback);
+      indexes(reg, conf, function (err) {
+        console.log('Index files written.');
+        callback(err);
+      });
     },
     tags: function (callback) {
-      tags(reg, conf, callback);
+      tags(reg, conf, function (err, rest) {
+        console.log('Tag files written.');
+        callback(err);
+      });
     },
     autoindex: function (callback) {
-      autoindex(reg, conf, callback);
+      autoindex(reg, conf, function (err, rest) {
+        console.log('Autoindex files written.');
+        callback(err);
+      });
     }
   }, cb);
 };
@@ -74,9 +83,12 @@ function indexes(reg, conf, cb) {
           if (err)
             return cb(err);
 
-          var files = 0;
+          // if no files are in the index, decrease todo
+          if (pages.length == 0 && !--todo)
+            return cb();
+
           // for each page, own scope
-          for (var i = 0; i < pages.length; i++) {(function (i) {
+          for (var i = 0, files = 0; i < pages.length; i++) {(function (i) {
             var page = pages[i];
             page.toArray(function (err, documents) {
               if (err)
@@ -135,7 +147,7 @@ function tags(reg, conf, cb) {
             fs.writeFile(file, fileContents, function (err) {
               if (err)
                 return callback(err);
-              console.log('  '+file+' written.');
+              console.log('  * '+file+' written.');
               if (!--todo)
                 return callback();
             });
@@ -155,7 +167,7 @@ function tags(reg, conf, cb) {
           fs.writeFile(file, fileContents, function (err) {
             if (err)
               return callback(err);
-            console.log('  '+file+' written.');
+            console.log('  * '+file+' written.');
             callback();
           });
         });
@@ -217,7 +229,7 @@ function autoindex(reg, conf, cb) {
           fs.writeFile(file, fileContents, function (err) {
             if (err)
               return cb(err);
-            console.log('  '+file+' written.');
+            console.log('  * '+file+' written.');
           });
         });
       }
