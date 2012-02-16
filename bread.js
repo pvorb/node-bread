@@ -37,28 +37,35 @@ var bread = function(conf, cb) {
         reg.tags = new Set();
 
         // Parse contents with `marked()`
-        hooks.__content = function(f, prop, cb) {
+        hooks.__content = function __content(f, prop, cb) {
           pandoc(prop.__content, 'markdown', 'html', cb);
         };
 
+        hooks.__propBefore = function __propBefore(f, prop, cb) {
+          if (!prop.modified)
+            prop.modified = new Date();
+
+          cb(null, prop);
+        };
+
         // Parse ISO 8601 dates
-        hooks.date = function(f, prop, cb) {
-          var date;
+        hooks.created = function(f, prop, cb) {
+          var created;
           // If it's not a date, try parse it
-          if (typeof prop.date != 'date') {
+          if (typeof prop.created != 'date') {
             try {
-              date = isodate(prop.date);
+              created = isodate(prop.created);
             } catch (err) {
               try {
-                date = new Date(prop.date);
+                created = new Date(prop.created);
               } catch (err) {
                 return cb(err);
               }
             }
           } else
-            date = prop.date;
+            created = prop.created;
 
-          cb(null, date)
+          cb(null, created);
         };
 
         // Save files in registry
