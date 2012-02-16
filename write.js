@@ -5,6 +5,7 @@ var clone = require('clone');
 var dive = require('dive');
 var async = require('async');
 var ejs = require('ejs');
+var esc = require('esc');
 
 module.exports = function write(reg, conf, cb) {
   console.log('Beginning to write index and tag files.');
@@ -47,6 +48,9 @@ function indexes(reg, conf, cb) {
       var p = (typeof conf.properties == 'object') ?
         append(clone(conf.properties), index.properties) :
         clone(index.properties);
+
+      // add esc to p
+      p.esc = esc;
 
       // set title
       p.title = index.title;
@@ -138,6 +142,7 @@ function tags(reg, conf, cb) {
           reg.tags.toArray().forEach(function (tag) {
             var p = clone(conf.properties);
 
+            p.esc = esc;
             p.title = tag;
 
             var file = path.resolve(tagDir, tag+'.html');
@@ -187,12 +192,18 @@ function autoindex(reg, conf, cb) {
   var tplDir = conf.directories.templates;
 
   // dive down the directory tree
-  dive(pubDir, { directories: true, files: false }, function (err, dir) {
+  dive(pubDir, { directories: true, files: false, recursive: true },
+      function (err, dir) {
     if (err)
       return cb(err);
 
+    // normalize dir and remove pubDir
+    var dirname = dir.replace(path.normalize(pubDir + '/'), '');
+    // normalize slashes
+    dirname = dirname.replace('\\', '/');
+
     for (var i in conf.autoindex) {(function (index) {
-      if ((dir+'/').match(new RegExp(index.pattern))) {
+      if (dirname.match(new RegExp(index.pattern))) {
         async.parallel({
           tpl: function (callback) {
             // read template
