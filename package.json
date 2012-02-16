@@ -6,7 +6,7 @@
     "blog",
     "markdown"
   ],
-  "version": "1.0.0-beta",
+  "version": "1.0.0-RC1",
   "repository": {
     "type": "git",
     "url": "git://github.com/pvorb/node-bread.git"
@@ -41,5 +41,7 @@
       "type": "MIT",
       "url": "http://vorb.de/license/mit.html"
     }
-  ]
+  ],
+  "devDependencies": {},
+  "optionalDependencies": {}
 }
