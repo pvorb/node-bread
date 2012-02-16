@@ -48,28 +48,33 @@ var bread = function(conf, cb) {
           cb(null, prop);
         };
 
-        // Parse ISO 8601 dates
-        hooks.created = function(f, prop, cb) {
+        function fixDate(date, cb) {
           var created;
-          // If it's not a date, try parse it
-          if (typeof prop.created != 'date') {
+          // If it's not a date, try to parse it
+          if (typeof date != 'date' && typeof date != 'undefined') {
             try {
-              created = isodate(prop.created);
+              date = isodate(date);
             } catch (err) {
               try {
-                created = new Date(prop.created);
+                date = new Date(date);
               } catch (err) {
                 return cb(err);
               }
             }
-          } else
-            created = prop.created;
+          }
 
-          cb(null, created);
+          cb(null, date);
+        }
+
+        hooks.created = function created(f, prop, cb) {
+          fixDate(prop.created, cb);
         };
 
-        // Save files in registry
-        hooks.__writeAfter = function(f, prop, cb) {
+        hooks.modified = function modified(f, prop, cb) {
+          fixDate(prop.modified, cb);
+        };
+
+        hooks.__writeAfter = function __writeAfter(f, prop, cb) {
           var id = prop._id;
           delete prop._id;
           reg.extend(id, prop, x);
