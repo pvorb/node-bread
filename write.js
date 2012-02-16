@@ -83,8 +83,6 @@ function indexes(reg, conf, cb) {
           if (err)
             return cb(err);
 
-          console.log(pages.length);
-
           // if no files are in the index, decrease todo
           if (pages.length == 0 && !--todo)
             return cb();
@@ -96,8 +94,6 @@ function indexes(reg, conf, cb) {
               if (err)
                 return cb(err);
               p.__docs = documents;
-
-              console.log(documents);
 
               // get filename for page
               if (i == 0)
