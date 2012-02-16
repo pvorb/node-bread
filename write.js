@@ -200,7 +200,7 @@ function autoindex(reg, conf, cb) {
     // normalize dir and remove pubDir
     var dirname = dir.replace(path.normalize(pubDir + '/'), '');
     // normalize slashes
-    dirname = dirname.replace('\\', '/');
+    dirname = dirname.replace(new RegExp('\\\\', 'g'), '/');
 
     for (var i in conf.autoindex) {(function (index) {
       if (dirname.match(new RegExp(index.pattern))) {
@@ -230,8 +230,9 @@ function autoindex(reg, conf, cb) {
           if (err)
             return cb(err);
           var p = clone(conf.properties);
-          p.__dir = dir;
+          p.__dir = dirname;
           p.__files = data.files;
+          p.title = dirname.split('/').pop();
 
           var file = path.resolve(dir, index.path);
           var fileContents = ejs.render(data.tpl, { locals: p });
