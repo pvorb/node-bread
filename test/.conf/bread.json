@@ -49,7 +49,7 @@
   "autoindex": [
     {
       "path": "index.html",
-      "pattern": "\\d{4}/",
+      "pattern": "\\d{4}",
       "template": "dir.tpl",
       "filter": "index\\.html|.*\\.mkd"
     }
