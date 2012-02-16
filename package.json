@@ -31,6 +31,7 @@
     "confdir": ">=0.0.2",
     "dive": ">=0.2.0",
     "ejs": ">=0.6.1",
+    "esc": ">=0.0.2",
     "isodate": ">=0.1.0",
     "mongodb": ">=0.9.9",
     "pdc": ">=0.0.0",
@@ -41,7 +42,5 @@
       "type": "MIT",
       "url": "http://vorb.de/license/mit.html"
     }
-  ],
-  "devDependencies": {},
-  "optionalDependencies": {}
+  ]
 }
