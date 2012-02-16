@@ -69,7 +69,7 @@ function indexes(reg, conf, cb) {
             fs.writeFile(file, data, function (err) {
               if (err)
                 return cb(err);
-              console.log('  '+file+' written.');
+              console.log('  * '+file+' written.');
               if (!--todo)
                 cb();
             });
@@ -83,6 +83,8 @@ function indexes(reg, conf, cb) {
           if (err)
             return cb(err);
 
+          console.log(pages.length);
+
           // if no files are in the index, decrease todo
           if (pages.length == 0 && !--todo)
             return cb();
@@ -94,6 +96,8 @@ function indexes(reg, conf, cb) {
               if (err)
                 return cb(err);
               p.__docs = documents;
+
+              console.log(documents);
 
               // get filename for page
               if (i == 0)
@@ -109,7 +113,7 @@ function indexes(reg, conf, cb) {
                 if (err)
                   return cb(err);
                 // callback at last
-                console.log('  '+file+' written.');
+                console.log('  * '+file+' written.');
                 if (++files == pages.length && !--todo)
                   cb();
               });
