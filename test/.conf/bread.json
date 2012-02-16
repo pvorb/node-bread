@@ -53,8 +53,5 @@
       "template": "dir.tpl",
       "filter": "index\\.html|.*\\.mkd"
     }
-  ],
-  "properties": {
-    "siteTitle": "My Site"
-  }
+  ]
 }
