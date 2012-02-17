@@ -108,6 +108,42 @@ function indexes(reg, conf, cb) {
                 var file = path.resolve(output,
                   index.path.pattern.replace(/{{page}}/g, i + 1));
 
+              // add an object with page references
+              var pag = {};
+              if (i >= 2) {
+                pag.first = {
+                  page: 1,
+                  file: index.path.first
+                };
+                pag.prev = {
+                  page: i,
+                  file: index.path.pattern.replace(/{{page}}/g, i)
+                };
+              } else if (i == 1) {
+                pag.prev = {
+                  page: 1,
+                  file: index.path.first
+                };
+              }
+
+              if (i < pages.length - 1) {
+                if (i < pages.length - 2)
+                  pag.last = {
+                    page: pages.length - 1,
+                    file: index.path.pattern.replace(/{{page}}/g,
+                        pages.length - 1)
+                  };
+
+                pag.next = {
+                  page: i + 2,
+                  file: index.path.pattern.replace(/{{page}}/g, i + 2)
+                };
+              }
+
+              pag.this = i + 1;
+
+              p.__pagination = pag;
+
               var fileContents = ejs.render(tpl, { locals: p });
 
               // write the page to disk
