@@ -19,6 +19,9 @@ confdir(process.cwd(), 'conf', function (err, confdir) {
     },
     properties: function (cb) {
       fs.readFile(path.resolve(confdir, 'properties.json'), 'utf8', cb);
+    },
+    ignore: function (cb) {
+      fs.readFile(path.resolve(confdir, 'ignore.json'), 'utf8', cb);
     }
   }, function (err, files) {
     if (err)
@@ -27,6 +30,7 @@ confdir(process.cwd(), 'conf', function (err, confdir) {
     // parse JSON and setup conf object
     var conf = JSON.parse(files.conf);
     conf.properties = JSON.parse(files.properties);
+    conf.ignore = JSON.parse(files.ignore);
 
     conf.confdir = confdir;
     conf.root = path.resolve(confdir, '..');
