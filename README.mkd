@@ -78,7 +78,7 @@ If you encounter any bugs or issues, feel free to open an issue at
 
 ## License
 
-Copyright © 2011-2012 Paul Vorbach <paul@vorb.de> (http://vorb.de/)
+Copyright © 2011-2012 Paul Vorbach
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the “Software”), to deal in
