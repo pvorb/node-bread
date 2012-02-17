@@ -145,16 +145,29 @@ function tags(reg, conf, cb) {
             p.esc = esc;
             p.title = tag;
 
-            var file = path.resolve(tagDir, tag+'.html');
-            var fileContents = ejs.render(tpl, { locals: p });
-
-            // write tag file
-            fs.writeFile(file, fileContents, function (err) {
+            // get docs with tag
+            reg.get({ tags: tag }, {}, tags.sort, 0, function (err, docs) {
               if (err)
                 return callback(err);
-              console.log('  * '+file+' written.');
-              if (!--todo)
-                return callback();
+
+              docs.toArray(function (err, docs) {
+                if (err)
+                  return callback(err);
+
+                p.__docs = docs;
+
+                var file = path.resolve(tagDir, tag+'.html');
+                var fileContents = ejs.render(tpl, { locals: p });
+
+                // write tag file
+                fs.writeFile(file, fileContents, function (err) {
+                  if (err)
+                    return callback(err);
+                  console.log('  * '+file+' written.');
+                  if (!--todo)
+                    return callback();
+                });
+              });
             });
           });
         });
@@ -217,6 +230,10 @@ function autoindex(reg, conf, cb) {
           files: function (callback) {
             // read directory
             fs.readdir(dir, function (err, files) {
+              if (err)
+                return callback(err);
+              if (!files.length)
+                return callback(null, files);
 
               var tasks = [];
               // for each file
