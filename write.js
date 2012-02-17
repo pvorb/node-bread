@@ -217,13 +217,34 @@ function autoindex(reg, conf, cb) {
           files: function (callback) {
             // read directory
             fs.readdir(dir, function (err, files) {
-              if (err)
-                return callback(err);
-              // filter unwanted files
-              var filtered = files.filter(function (elem) {
-                return !(new RegExp(index.filter)).test(elem);
+
+              var tasks = [];
+              // for each file
+              for (var i = 0; i < files.length; i++) {(function (i, file) {
+                // add new task
+                tasks[i] = function (callback) {
+                  // get stats
+                  fs.stat(path.resolve(dir, file), function (err, stats) {
+                    if (stats.isDirectory()
+                        && (new RegExp(index.directory.match)).test(file)
+                        && !(new RegExp(index.directory.filter)).test(file))
+                      callback(null, file + '/');
+                    else if (stats.isFile()
+                        && (new RegExp(index.file.match)).test(file)
+                        && !(new RegExp(index.file.filter)).test(file))
+                      callback(null, file);
+                    else
+                      callback(null, null);
+                  });
+                };
+              })(i, files[i]);}
+
+              // run parallel
+              async.parallel(tasks, function (err, files) {
+                callback(null, files.filter(function (elem) {
+                  return elem !== null;
+                }));
               });
-              callback(null, filtered);
             });
           }
         }, function (err, data) {
