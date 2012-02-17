@@ -47,7 +47,7 @@ var bread = function(conf, cb) {
 
         hooks.__propBefore = function __propBefore(f, prop, cb) {
           if (!prop.modified)
-            prop.modified = new Date();
+            prop.modified = prop.created;
 
           cb(null, prop);
         };
