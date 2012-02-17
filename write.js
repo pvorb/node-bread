@@ -6,6 +6,8 @@ var dive = require('dive');
 var async = require('async');
 var ejs = require('ejs');
 var esc = require('esc');
+var props = require('props');
+var pandoc = require('pdc');
 
 module.exports = function write(reg, conf, cb) {
   console.log('Beginning to write index and tag files.');
@@ -136,6 +138,7 @@ function tags(reg, conf, cb) {
       tag: function (callback) {
         fs.readFile(path.resolve(dir.templates, tags.template), 'utf8',
             function (err, tpl) {
+
           var todo = reg.tags.length;
 
           // for each tag
@@ -150,22 +153,45 @@ function tags(reg, conf, cb) {
               if (err)
                 return callback(err);
 
+
               docs.toArray(function (err, docs) {
                 if (err)
                   return callback(err);
 
-                p.__docs = docs;
+                function writeTagFile(tag, p) {;
+                  p.__docs = docs;
 
-                var file = path.resolve(tagDir, tag+'.html');
-                var fileContents = ejs.render(tpl, { locals: p });
+                  var file = path.resolve(tagDir, tag+'.html');
+                  var fileContents = ejs.render(tpl, { locals: p });
+                  // write tag file
+                  fs.writeFile(file, fileContents, function (err) {
+                    if (err)
+                      return callback(err);
+                    console.log('  * '+file+' written.');
+                    if (!--todo)
+                      return callback();
+                  });
+                }
 
-                // write tag file
-                fs.writeFile(file, fileContents, function (err) {
-                  if (err)
-                    return callback(err);
-                  console.log('  * '+file+' written.');
-                  if (!--todo)
-                    return callback();
+                fs.readFile(path.resolve(dir.tags, tag + '.txt'), 'utf8',
+                    function (err, text) {
+                  // ignore errors
+                  if (err) {
+                    return writeTagFile(tag, p);
+                  } else {
+                    // parse properties
+                    p = append(p, props(text));
+
+                    return pandoc(p.__content, 'markdown', 'html',
+                        function (err, html) {
+                      if (err)
+                        return callback(err);
+
+                      p.__content = html;
+
+                      return writeTagFile(tag, p);
+                    });
+                  }
                 });
               });
             });
@@ -173,9 +199,9 @@ function tags(reg, conf, cb) {
         });
       },
       index: function (callback) {
-        fs.readFile(path.resolve(dir.templates, tags.index.template), 'utf8',
-            function (err, tpl) {
-          var p = clone(conf.properties);
+          fs.readFile(path.resolve(dir.templates, tags.index.template), 'utf8',
+              function (err, tpl) {
+            var p = clone(conf.properties);
 
           p.__tags = reg.tags.toArray();
 
