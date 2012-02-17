@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="800"
+   width="640"
    height="400"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 "
    sodipodi:docname="bread.svg"
    inkscape:export-filename="D:\Pictures\Projekte\bread.png"
-   inkscape:export-xdpi="47.950001"
-   inkscape:export-ydpi="47.950001">
+   inkscape:export-xdpi="49.700001"
+   inkscape:export-ydpi="49.700001">
   <title
      id="title3010">Bread</title>
   <defs
@@ -78,17 +78,5 @@
          id="path2998"
          inkscape:connector-curvature="0" />
     </g>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:-2.57999992px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bauhaus 93;-inkscape-font-specification:Bauhaus 93"
-       x="782.58002"
-       y="1032.3622"
-       id="text3004"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         x="780"
-         y="1032.3622"
-         id="tspan3008"
-         style="font-size:144px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;text-anchor:end;font-family:Vollkorn Regular;-inkscape-font-specification:'Vollkorn Regular,'">bread</tspan></text>
   </g>
 </svg>
