@@ -6,6 +6,7 @@ var mongo = require('mongodb');
 var append = require('append');
 var clone = require('clone');
 var Set = require('Set');
+var path = require('path');
 
 var write = require('./write.js');
 
@@ -16,6 +17,9 @@ var x = function () {};
 var bread = function(conf, cb) {
 
   var dir = conf.directories;
+  for (var key in dir) {
+    dir[key] = path.resolve(conf.root, dir[key]);
+  }
 
   // Open connection to MongoDB
   new mongo.Db(conf.db.name, new mongo.Server(conf.db.host, conf.db.port))
