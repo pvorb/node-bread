@@ -6,7 +6,7 @@
     "blog",
     "markdown"
   ],
-  "version": "1.0.0-RC2",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/pvorb/node-bread.git"
