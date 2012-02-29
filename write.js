@@ -239,7 +239,7 @@ function tags(reg, conf, cb) {
               function (err, tpl) {
             var p = clone(conf.properties);
 
-          p.__tags = reg.tags.toArray();
+          p.__tags = reg.tags.toArray().sort();
 
           var file = path.resolve(tagDir, tags.index.path);
           var fileContents = ejs.render(tpl, { locals: p });
