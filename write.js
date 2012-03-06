@@ -183,6 +183,7 @@ function tags(reg, conf, cb) {
 
             p.esc = esc;
             p.title = tag;
+            p.file = tag+'.html';
 
             // get docs with tag
             reg.get({ tags: tag }, {}, tags.sort, 0, function (err, docs) {
