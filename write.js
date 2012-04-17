@@ -169,95 +169,103 @@ function tags(reg, conf, cb) {
   if (reg.tags) {
     var tagDir = path.resolve(conf.root, dir.output, tags.directory);
 
-    // Load templates concurrently
-    async.parallel({
-      tag: function (callback) {
-        fs.readFile(path.resolve(dir.templates, tags.template), 'utf8',
-            function (err, tpl) {
+    fs.readdir(dir.tags, function (err, files) {
+      if (!err)
+        for (var i in files) {
+          var file = files[i];
+          reg.tags.add(file.replace(/\..+$/, ''));
+        }
 
-          var todo = reg.tags.length;
+      // Load templates concurrently
+      async.parallel({
+        tag: function (callback) {
+          fs.readFile(path.resolve(dir.templates, tags.template), 'utf8',
+              function (err, tpl) {
 
-          // for each tag
-          reg.tags.toArray().forEach(function (tag) {
-            var p = clone(conf.properties);
+            var todo = reg.tags.length;
 
-            p.esc = esc;
-            p.title = tag;
-            p.file = tag+'.html';
+            // for each tag
+            reg.tags.toArray().forEach(function (tag) {
+              var p = clone(conf.properties);
 
-            // get docs with tag
-            reg.get({ tags: tag }, {}, tags.sort, 0, function (err, docs) {
-              if (err)
-                return callback(err);
+              p.esc = esc;
+              p.title = tag;
+              p.file = tag+'.html';
 
-
-              docs.toArray(function (err, docs) {
+              // get docs with tag
+              reg.get({ tags: tag }, {}, tags.sort, 0, function (err, docs) {
                 if (err)
                   return callback(err);
 
-                function writeTagFile(tag, p) {;
-                  p.__docs = docs;
 
-                  var file = path.resolve(tagDir, tag+'.html');
-                  var fileContents = ejs.render(tpl, { locals: p });
-                  // write tag file
-                  fs.writeFile(file, fileContents, function (err) {
-                    if (err)
-                      return callback(err);
-                    console.log('  * '+file+' written.');
-                    if (!--todo)
-                      return callback();
-                  });
-                }
+                docs.toArray(function (err, docs) {
+                  if (err)
+                    return callback(err);
 
-                fs.readFile(path.resolve(dir.tags, tag + '.txt'), 'utf8',
-                    function (err, text) {
-                  // ignore errors
-                  if (err) {
-                    return writeTagFile(tag, p);
-                  } else {
-                    // parse properties
-                    p = append(p, props(text));
+                  function writeTagFile(tag, p) {;
+                    p.__docs = docs;
 
-                    return pandoc(p.__content, 'markdown', 'html',
-                        function (err, html) {
+                    var file = path.resolve(tagDir, tag+'.html');
+                    var fileContents = ejs.render(tpl, { locals: p });
+                    // write tag file
+                    fs.writeFile(file, fileContents, function (err) {
                       if (err)
                         return callback(err);
-
-                      p.__content = html;
-
-                      return writeTagFile(tag, p);
+                      console.log('  * '+file+' written.');
+                      if (!--todo)
+                        return callback();
                     });
                   }
+
+                  fs.readFile(path.resolve(dir.tags, tag + '.txt'), 'utf8',
+                      function (err, text) {
+                    // ignore errors
+                    if (err) {
+                      return writeTagFile(tag, p);
+                    } else {
+                      // parse properties
+                      p = append(p, props(text));
+
+                      return pandoc(p.__content, 'markdown', 'html',
+                          function (err, html) {
+                        if (err)
+                          return callback(err);
+
+                        p.__content = html;
+
+                        return writeTagFile(tag, p);
+                      });
+                    }
+                  });
                 });
               });
             });
           });
-        });
-      },
-      index: function (callback) {
-          fs.readFile(path.resolve(dir.templates, tags.index.template), 'utf8',
-              function (err, tpl) {
-            var p = clone(conf.properties);
+        },
+        index: function (callback) {
+            fs.readFile(path.resolve(dir.templates, tags.index.template), 'utf8',
+                function (err, tpl) {
+              var p = clone(conf.properties);
 
-          p.__tags = reg.tags.toArray().sort();
+            p.__tags = reg.tags.toArray().sort();
 
-          var file = path.resolve(tagDir, tags.index.path);
-          var fileContents = ejs.render(tpl, { locals: p });
+            var file = path.resolve(tagDir, tags.index.path);
+            var fileContents = ejs.render(tpl, { locals: p });
 
-          fs.writeFile(file, fileContents, function (err) {
-            if (err)
-              return callback(err);
-            console.log('  * '+file+' written.');
-            callback();
+            fs.writeFile(file, fileContents, function (err) {
+              if (err)
+                return callback(err);
+              console.log('  * '+file+' written.');
+              callback();
+            });
           });
-        });
-      }
-    }, function (err) {
-      if (err)
-        return cb(err);
+        }
+      }, function (err) {
+        if (err)
+          return cb(err);
 
-      cb();
+        cb();
+      });
     });
   } else
     return cb();
