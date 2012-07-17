@@ -44,7 +44,7 @@ var bread = function(conf, cb) {
           var hooks = {};
           reg.tags = new Set();
 
-          // Parse contents with `marked()`
+          // Parse contents with pandoc
           hooks.__content = function __content(f, prop, cb) {
             pandoc(prop.__content, 'markdown', 'html', cb);
           };
