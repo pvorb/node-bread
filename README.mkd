@@ -5,6 +5,12 @@
 a file based static website/blog generator for node that uses [bake][bake],
 [mongodb][mongodb-native] and [markdown][marked].
 
+I’m using it for my personal website, [vorb.de][vorb.de]. It supports
+normal pages (in any directory structure you like), customizable index 
+pages and feeds as well as tag pages. Commenting functionality can be added
+by using a service like [Disqus][disqus] or my own [comments][comments],
+which also supports pingbacks.
+
 So let’s see how you can bake your bread in node.
 
 ## Example
@@ -98,6 +104,9 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+[vorb.de]: http://vorb.de/
+[disqus]: http://disqus.com/
+[comments]: //github.com/pvorb/node-comments
 [bake]: //github.com/pvorb/node-bake
 [mongodb-native]: //github.com/christkv/node-mongodb-native
 [marked]: //github.com/chjj/marked
