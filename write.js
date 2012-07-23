@@ -129,9 +129,9 @@ function indexes(reg, conf, cb) {
               if (i < pages.length - 1) {
                 if (i < pages.length - 2)
                   pag.last = {
-                    page: pages.length - 1,
+                    page: pages.length,
                     file: index.path.pattern.replace(/{{page}}/g,
-                        pages.length - 1)
+                        pages.length)
                   };
 
                 pag.next = {
