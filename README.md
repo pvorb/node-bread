@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/pvorb/node-bread.png)](http://travis-ci.org/pvorb/node-bread)
 # bread
 
 ![bread](https://raw.github.com/pvorb/node-bread/master/res/bread.png)
