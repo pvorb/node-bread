@@ -68,17 +68,22 @@ function indexes(reg, conf, cb) {
 
             p.__docs = documents;
 
-            var data = ejs.render(tpl, { locals: p });
+            try {
+              var data = ejs.render(tpl, { locals: p });
 
-            // get filename and write the file to disk
-            var file = path.resolve(output, index.path);
-            fs.writeFile(file, data, function (err) {
-              if (err)
-                return cb(err);
-              console.log('  * '+file+' written.');
-              if (!--todo)
-                cb();
-            });
+              // get filename and write the file to disk
+              var file = path.resolve(output, index.path);
+              fs.writeFile(file, data, function (err) {
+                if (err)
+                  return cb(err);
+                console.log('  * '+file+' written.');
+                if (!--todo)
+                  cb();
+              });
+            } catch(e) {
+              console.log('Error in:', index.path + ', ' + index.template);
+              throw e;
+            }
           });
         });
       // if we've got a multi page index (e.g. blog archives)
