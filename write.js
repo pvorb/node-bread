@@ -8,6 +8,7 @@ var ejs = require('ejs');
 var esc = require('esc');
 var props = require('props');
 var pandoc = require('pdc');
+var mkdirp = require('mkdirp');
 
 module.exports = function write(reg, conf, cb) {
   console.log('Beginning to write index and tag files.');
@@ -36,6 +37,8 @@ module.exports = function write(reg, conf, cb) {
 function indexes(reg, conf, cb) {
   var dir = conf.directories;
   var output = path.resolve(conf.root, dir.output);
+
+  mkdirp.sync(output);
 
   // total number of indexes
   var todo = conf.indexes.length;
@@ -173,6 +176,7 @@ function tags(reg, conf, cb) {
 
   if (reg.tags) {
     var tagDir = path.resolve(conf.root, dir.output, tags.directory);
+    mkdirp.sync(tagDir);
 
     fs.readdir(dir.tags, function (err, files) {
       if (!err)
@@ -207,7 +211,7 @@ function tags(reg, conf, cb) {
                   if (err)
                     return callback(err);
 
-                  function writeTagFile(tag, p) {;
+                  function writeTagFile(tag, p) {
                     p.__docs = docs;
 
                     var file = path.resolve(tagDir, tag+'.html');
