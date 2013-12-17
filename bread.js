@@ -46,7 +46,10 @@ var bread = function(conf, cb) {
 
           // Parse contents with pandoc
           hooks.__content = function __content(f, prop, cb) {
-            pandoc(prop.__content, 'markdown', 'html', cb);
+            var args = [ '--smart' ];
+            if (prop.lang)
+              args.push('-V lang=' + prop.lang);
+            pandoc(prop.__content, 'markdown', 'html', args, cb);
           };
 
           hooks.__propBefore = function __propBefore(f, prop, cb) {
@@ -85,6 +88,10 @@ var bread = function(conf, cb) {
           hooks.__writeAfter = function __writeAfter(f, prop, cb) {
             var id = prop._id;
             delete prop._id;
+
+            if (prop.state == 'hidden')
+              return cb(null, prop);
+
             reg.extend(id, prop, x);
             if (prop.tags)
               for (var i = 0; i < prop.tags.length; i++)
