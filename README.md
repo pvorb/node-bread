@@ -5,7 +5,7 @@
 a file based static website/blog generator for node that uses [bake][bake],
 [mongodb][mongodb-native] and [markdown][marked].
 
-I’m using it for my personal website, [vorb.de][vorb.de]. It supports
+I’m using it for my personal website, [vorba.ch][vorb.de]. It supports
 normal pages (in any directory structure you like), customizable index 
 pages and feeds as well as tag pages. Commenting functionality can be added
 by using a service like [Disqus][disqus] or my own [comments][comments],
@@ -15,7 +15,7 @@ So let’s see how you can bake your bread in node.
 
 ## Example
 
-```javascript
+~~~javascript
 var bread = require("bread");
 
 // configuration object
@@ -72,10 +72,38 @@ var conf = {
 };
 
 bread(conf);
-```
+~~~
 
 That's it for the moment. Extended documentation will soon follow in the [wiki][wiki].
 
+## Example: vorba.ch
+
+You can check out the repo for my personal website to get a picture of how bread
+works. Before you can start, install MongoDB and ensure it is running under
+`localhost:27017`.
+
+~~~
+$ cd your-working-directory
+$ git clone git://github.com/pvorb/vorba.ch.git
+$ cd vorba.ch
+$ npm install -g bread
+$ mongo
+MongoDB shell version: x.y.z
+connecting to: test
+> use vorb_de
+switched to db vorb_de
+> db.createCollection('docs')
+{ "ok": 1 }
+> exit
+bye
+$ bread
+# let the magic happen
+$ npm install -g wup
+$ cd public
+$ wup
+~~~
+
+Then, all you have to do is visit [localhost:8080](http://localhost:8080/).
 
 ## Bugs and Issues
 
@@ -84,7 +112,7 @@ If you encounter any bugs or issues, feel free to open an issue at
 
 ## License
 
-Copyright © 2011-2012 Paul Vorbach
+Copyright © 2011-2014 Paul Vorbach
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the “Software”), to deal in
@@ -104,7 +132,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-[vorb.de]: http://vorb.de/
+[vorb.de]: http://vorba.ch/
 [disqus]: http://disqus.com/
 [comments]: //github.com/pvorb/node-comments
 [bake]: //github.com/pvorb/node-bake
@@ -112,4 +140,4 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [marked]: //github.com/chjj/marked
 [wiki]: //github.com/pvorb/node-bread/wiki
 [issues]: //github.com/pvorb/node-bread/issues
-[mit]: http://vorb.de/license/mit.html
+[mit]: http://vorba.ch/license/mit.html
